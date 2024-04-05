@@ -14,12 +14,12 @@ public class Area implements Drawable {
     private final Lock removingLock = new ReentrantLock();
     private final Lock addingLock = new ReentrantLock();
 
-    public boolean removeEntity(Entity obj) {
+    public boolean removeEntity(Entity entity) {
         boolean status = false;
         try {
             removingLock.lockInterruptibly();
             try {
-                status = entities.remove(obj);
+                status = entities.remove(entity);
             } finally {
                 removingLock.unlock();
             }
@@ -29,12 +29,12 @@ public class Area implements Drawable {
         return status;
     }
 
-    public boolean addEntity(Entity obj) {
+    public boolean addEntity(Entity entity) {
         boolean status = false;
         try {
             addingLock.lockInterruptibly();
             try {
-                status = entities.remove(obj);
+                status = entities.add(entity);
             } finally {
                 addingLock.unlock();
             }
