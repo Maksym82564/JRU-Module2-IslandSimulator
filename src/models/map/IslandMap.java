@@ -23,6 +23,7 @@ public class IslandMap {
             }
             System.out.println();
         }
+        System.out.println();
     }
 
     public Area getArea(Coordinates coords) {

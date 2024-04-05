@@ -51,9 +51,9 @@ public class Area implements Drawable {
             return "|" + ICON + "|";
         }
         for (Entity entity : entities) {
-            image.append(entity.draw()).append("|");
+            image.append(entity.draw());
         }
-        return image.toString();
+        return image.append("|").toString();
     }
 
     public Set<Entity> getEntities() {
