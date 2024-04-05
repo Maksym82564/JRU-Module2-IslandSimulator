@@ -1,6 +1,8 @@
 package randomizer;
 
 import enums.Direction;
+import models.map.Coordinates;
+import models.map.IslandMap;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -20,12 +22,24 @@ public class RandomizerUtil {
         }
     }
 
-    public static Direction rollRandomDirection() {
+    public static Direction rollDirection() {
         int num = ThreadLocalRandom.current().nextInt(Direction.values().length);
         return Direction.values()[num];
     }
 
-    public static int rollRandomSpeed(int maxSpeed) {
+    public static int rollSpeed(int maxSpeed) {
         return ThreadLocalRandom.current().nextInt(maxSpeed + 1);
+    }
+
+    public static Coordinates rollRandomCoords(IslandMap islandMap) {
+        int x = ThreadLocalRandom.current().nextInt(islandMap.getMaxX() + 1);
+        int y = ThreadLocalRandom.current().nextInt(islandMap.getMaxY() + 1);
+        return new Coordinates(x, y);
+    }
+
+    public static <T extends Enum<T>> T rollAnimal(Class<T> tClass) {
+        T[] values = tClass.getEnumConstants();
+        int rand = ThreadLocalRandom.current().nextInt(values.length);
+        return values[rand];
     }
 }
