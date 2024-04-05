@@ -13,15 +13,13 @@ public class IslandMap {
         this.width = width;
         this.height = height;
         areas = new Area[width][height];
-        Arrays.stream(areas).forEach(row -> Arrays.fill(row, new Area()));
+        Arrays.stream(areas).forEach(row -> Arrays.setAll(row, i -> new Area()));
     }
 
     public void drawIsland() {
         for (int i = 0; i < areas.length; i++) {
             for (int j = 0; j < areas[i].length; j++) {
-                for (Entity entity : areas[i][j].getEntities()) {
-                    System.out.print(entity.draw());
-                }
+                System.out.print(areas[i][j].draw());
             }
             System.out.println();
         }
