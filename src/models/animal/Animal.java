@@ -8,21 +8,23 @@ import models.map.IslandMap;
 import models.map.Area;
 import randomizer.RandomizerUtil;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
-public abstract class Animal extends Thread implements Entity {
-    private final Map<String, Integer> chanceToConsumeMap = new ConcurrentHashMap<>();
+public abstract class Animal implements Entity, Runnable {
+    private volatile boolean isAlive = true;
+    private final Map<String, Integer> chanceToConsumeMap = new HashMap<>();
     private final IslandMap islandMap;
     private final Coordinates currentCoords;
     private int maxSpeed;
     private String animalName;
     private String icon;
 
-    public Animal(IslandMap islandMap, Coordinates currentCoords) {
+    public Animal(IslandMap islandMap, Coordinates coords) {
         super();
         this.islandMap = islandMap;
-        this.currentCoords = currentCoords;
+        this.currentCoords = coords;
+        islandMap.getArea(coords).addEntity(this);
     }
 
     @Override
@@ -36,8 +38,8 @@ public abstract class Animal extends Thread implements Entity {
     }
 
     public void move() {
-        int speed = RandomizerUtil.rollRandomSpeed(maxSpeed);
-        Direction direction = RandomizerUtil.rollRandomDirection();
+        int speed = RandomizerUtil.rollSpeed(maxSpeed);
+        Direction direction = RandomizerUtil.rollDirection();
         int newX = currentCoords.getX();
         int newY = currentCoords.getY();
         switch (direction) {
@@ -70,8 +72,8 @@ public abstract class Animal extends Thread implements Entity {
         Area area = islandMap.getArea(currentCoords);
         area.removeEntity(obj);
         if (obj instanceof Animal animal) {
-            animal.interrupt();
-            area.addEntity(new Herb(currentCoords));
+            animal.setDead();
+            new Herb(currentCoords, islandMap);
         }
     }
 
@@ -92,9 +94,17 @@ public abstract class Animal extends Thread implements Entity {
         }
     }
 
+    public boolean isAlive() {
+        return isAlive;
+    }
+
     public void setChanceToConsumeMap(Map<String, Integer> map) {
         this.chanceToConsumeMap.clear();
         this.chanceToConsumeMap.putAll(map);
+    }
+
+    private void setDead() {
+        isAlive = false;
     }
 
     public void setIcon(String icon) {
