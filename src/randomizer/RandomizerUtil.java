@@ -1,6 +1,7 @@
 package randomizer;
 
 import enums.Direction;
+import interfaces.AnimalEnum;
 import models.map.Coordinates;
 import models.map.IslandMap;
 
@@ -37,8 +38,8 @@ public class RandomizerUtil {
         return new Coordinates(x, y);
     }
 
-    public static <T extends Enum<T>> T rollAnimal(Class<T> tClass) {
-        T[] values = tClass.getEnumConstants();
+    public static <T extends AnimalEnum> T rollAnimal(Class<T> enumClass) {
+        T[] values = enumClass.getEnumConstants();
         int rand = ThreadLocalRandom.current().nextInt(values.length);
         return values[rand];
     }
