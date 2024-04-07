@@ -10,7 +10,7 @@ public class Wolf extends Predator {
     private static final String NAME = "wolf";
     private static final int MAX_SPEED = 3;
 
-    private static final Map<String, Integer> chanceToConsumeMap = Map.of(
+    private static final Map<String, Integer> CONSUME_MAP = Map.of(
             "horse", 10,
             "deer", 15,
             "rabbit", 60,
@@ -26,6 +26,6 @@ public class Wolf extends Predator {
         setAnimalName(NAME);
         setIcon(ICON);
         setMaxSpeed(MAX_SPEED);
-        setChanceToConsumeMap(chanceToConsumeMap);
+        setChanceToConsumeMap(CONSUME_MAP);
     }
 }
