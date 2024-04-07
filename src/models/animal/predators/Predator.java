@@ -1,11 +1,8 @@
 package models.animal.predators;
 
-import interfaces.Drawable;
 import models.animal.Animal;
 import models.map.Coordinates;
 import models.map.IslandMap;
-
-import java.util.Map;
 
 public abstract class Predator extends Animal {
     public Predator(IslandMap islandMap, Coordinates coords) {
@@ -14,9 +11,23 @@ public abstract class Predator extends Animal {
 
     @Override
     public void run() {
-        if (!Thread.currentThread().isInterrupted())
-            move();
-        if (!Thread.currentThread().isInterrupted())
+        if (isAlive()) {
             sweep();
+        }
+        else {
+            Thread.currentThread().interrupt();
+        }
+        if (isAlive()) {
+            move();
+        }
+        else {
+            Thread.currentThread().interrupt();
+        }
+        if (isAlive()) {
+            sweep();
+        }
+        else {
+            Thread.currentThread().interrupt();
+        }
     }
 }
