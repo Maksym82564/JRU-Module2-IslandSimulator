@@ -18,7 +18,7 @@ public abstract class Herbivorous extends Animal {
     @Override
     public void run() {
         if (isAlive()) {
-            sweep();
+            exploreArea();
         }
         else {
             Thread.currentThread().interrupt();
@@ -30,7 +30,7 @@ public abstract class Herbivorous extends Animal {
             Thread.currentThread().interrupt();
         }
         if (isAlive()) {
-            sweep();
+            exploreArea();
         }
         else {
             Thread.currentThread().interrupt();

@@ -77,7 +77,7 @@ public abstract class Animal implements Entity, Runnable {
         }
     }
 
-    public void sweep() {
+    public void exploreArea() {
         Area area = islandMap.getArea(currentCoords);
         for (Entity entity : area.getEntities()) {
             if (entity.equals(this)) {

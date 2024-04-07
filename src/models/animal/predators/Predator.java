@@ -12,7 +12,7 @@ public abstract class Predator extends Animal {
     @Override
     public void run() {
         if (isAlive()) {
-            sweep();
+            exploreArea();
         }
         else {
             Thread.currentThread().interrupt();
@@ -24,7 +24,7 @@ public abstract class Predator extends Animal {
             Thread.currentThread().interrupt();
         }
         if (isAlive()) {
-            sweep();
+            exploreArea();
         }
         else {
             Thread.currentThread().interrupt();
