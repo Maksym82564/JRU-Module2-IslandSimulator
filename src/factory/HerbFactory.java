@@ -1,16 +1,15 @@
 package factory;
 
 import models.herb.Herb;
-
-import java.util.HashSet;
-import java.util.Set;
+import models.map.Coordinates;
+import models.map.IslandMap;
+import randomizer.RandomizerUtil;
 
 public class HerbFactory {
-    public static Set<Herb> createHerbs(int herbAmount) {
-        Set<Herb> herbSet = new HashSet<>();
+    public static void createHerbs(int herbAmount, IslandMap islandMap) {
         for (int i = 0; i < herbAmount; i++) {
-
+            Coordinates randomCoords = RandomizerUtil.rollRandomCoords(islandMap);
+            new Herb(randomCoords, islandMap);
         }
-        return herbSet;
     }
 }
