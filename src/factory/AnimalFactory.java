@@ -1,40 +1,34 @@
 package factory;
 
-import enums.HerbivorousEnum;
-import enums.PredatorEnum;
-import models.animal.herbivorous.Herbivorous;
-import models.animal.herbivorous.Sheep;
-import models.animal.predators.Predator;
-import models.animal.predators.Wolf;
+import interfaces.AnimalEnum;
+import models.animal.Animal;
 import models.map.Coordinates;
 import models.map.IslandMap;
 import randomizer.RandomizerUtil;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Set;
 
 public class AnimalFactory {
-    public static Set<Predator> createPredatorSet(int predatorAmount, IslandMap map) {
-        Set<Predator> set = new HashSet<>();
-        for (int i = 0; i < predatorAmount; i++) {
-            PredatorEnum predatorEnum = RandomizerUtil.rollAnimal(PredatorEnum.class);
-            Coordinates randCoords = RandomizerUtil.rollRandomCoords(map);
-            switch (predatorEnum) {
-                case WOLF -> set.add(new Wolf(map, randCoords));
+    public static <T extends AnimalEnum> Set<Animal> createAnimalSet(int animalAmount, IslandMap map, Class<T> animalEnum) {
+        Set<Animal> animalSet = new HashSet<>();
+        for (int i = 0; i < animalAmount; i++) {
+            AnimalEnum randomAnimal = RandomizerUtil.rollAnimal(animalEnum);
+            Coordinates randomCoords = RandomizerUtil.rollRandomCoords(map);
+            Constructor<?> declaredConstructor = randomAnimal.getAnimalClass().getDeclaredConstructors()[0];
+            try {
+                Animal animal = (Animal) declaredConstructor.newInstance(map, randomCoords);
+                animalSet.add(animal);
+            } catch (InstantiationException e) {
+                throw new RuntimeException(e);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (InvocationTargetException e) {
+                throw new RuntimeException(e);
             }
         }
-        return set;
-    }
-
-    public static Set<Herbivorous> createHerbivorSet(int herbivorAmount, IslandMap map) {
-        Set<Herbivorous> set = new HashSet<>();
-        for (int i = 0; i < herbivorAmount; i++) {
-            HerbivorousEnum herbivorEnum = RandomizerUtil.rollAnimal(HerbivorousEnum.class);
-            Coordinates randCoords = RandomizerUtil.rollRandomCoords(map);
-            switch (herbivorEnum) {
-                case SHEEP -> set.add(new Sheep(map, randCoords));
-            }
-        }
-        return set;
+        return animalSet;
     }
 }
