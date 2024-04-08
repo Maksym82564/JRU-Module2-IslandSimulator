@@ -24,7 +24,11 @@ public abstract class Animal implements Entity, Runnable {
         super();
         this.islandMap = islandMap;
         this.currentCoords = coords;
-        islandMap.getArea(coords).addEntity(this);
+        beBorn();
+    }
+
+    private void beBorn() {
+        islandMap.getArea(currentCoords).addEntity(this);
     }
 
     @Override
@@ -68,16 +72,17 @@ public abstract class Animal implements Entity, Runnable {
         }
     }
 
-    public void eat(Entity obj) {
+    private void eat(Entity entity) {
         Area area = islandMap.getArea(currentCoords);
-        area.removeEntity(obj);
-        if (obj instanceof Animal animal) {
+        if (entity instanceof Animal animal) {
             animal.setDead();
-            new Herb(currentCoords, islandMap);
+        }
+        if (entity instanceof Herb herb) {
+            herb.setEaten();
         }
     }
 
-    public void exploreArea() {
+    public boolean exploreArea() {
         Area area = islandMap.getArea(currentCoords);
         for (Entity entity : area.getEntities()) {
             if (entity.equals(this)) {
@@ -88,10 +93,11 @@ public abstract class Animal implements Entity, Runnable {
                 int chance = chanceToConsumeMap.get(name);
                 if (RandomizerUtil.rollChanceToConsume(chance)) {
                     eat(entity);
-                    break;
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     public boolean isAlive() {
@@ -105,6 +111,8 @@ public abstract class Animal implements Entity, Runnable {
 
     private void setDead() {
         isAlive = false;
+        islandMap.getArea(currentCoords).removeEntity(this);
+        Thread.currentThread().interrupt();
     }
 
     public void setIcon(String icon) {
