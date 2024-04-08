@@ -17,23 +17,9 @@ public abstract class Herbivorous extends Animal {
 
     @Override
     public void run() {
-        if (isAlive()) {
-            exploreArea();
-        }
-        else {
-            Thread.currentThread().interrupt();
-        }
-        if (isAlive()) {
+        if (!exploreArea())
+        {
             move();
-        }
-        else {
-            Thread.currentThread().interrupt();
-        }
-        if (isAlive()) {
-            exploreArea();
-        }
-        else {
-            Thread.currentThread().interrupt();
         }
     }
 }
