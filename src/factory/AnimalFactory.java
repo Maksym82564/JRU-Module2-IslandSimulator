@@ -21,11 +21,7 @@ public class AnimalFactory {
             try {
                 Animal animal = (Animal) declaredConstructor.newInstance(map, randomCoords);
                 animalSet.add(animal);
-            } catch (InstantiationException e) {
-                throw new RuntimeException(e);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            } catch (InvocationTargetException e) {
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
                 throw new RuntimeException(e);
             }
         }
