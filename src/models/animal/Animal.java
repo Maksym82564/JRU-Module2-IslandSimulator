@@ -1,8 +1,8 @@
 package models.animal;
 
+import app.LifeCreator;
 import enums.Direction;
 import interfaces.Entity;
-import models.herb.Herb;
 import models.map.Coordinates;
 import models.map.IslandMap;
 import models.map.Area;
@@ -11,14 +11,19 @@ import randomizer.RandomizerUtil;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Animal implements Entity, Runnable {
-    private volatile boolean isAlive = true;
+public abstract class Animal implements Entity, Cloneable {
+    private LifeCreator lifeCreator;
+    private volatile boolean isAlive;
     private final Map<String, Integer> chanceToConsumeMap = new HashMap<>();
     private final IslandMap islandMap;
     private final Coordinates currentCoords;
     private int maxSpeed;
     private String animalName;
     private String icon;
+    private volatile boolean reproduced;
+    private int maxSatiety;
+    private int satiety;
+    private int nutritionValue;
 
     public Animal(IslandMap islandMap, Coordinates coords) {
         super();
@@ -28,6 +33,9 @@ public abstract class Animal implements Entity, Runnable {
     }
 
     private void beBorn() {
+        reproduced = true;
+        isAlive = true;
+        satiety = 0;
         islandMap.getArea(currentCoords).addEntity(this);
     }
 
@@ -39,6 +47,29 @@ public abstract class Animal implements Entity, Runnable {
     @Override
     public String getEntityName() {
         return animalName;
+    }
+
+    @Override
+    public int getNutritionValue() {
+        return nutritionValue;
+    }
+
+    @Override
+    public Animal clone() {
+        try {
+            Animal newBorn = (Animal) super.clone();
+            newBorn.beBorn();
+            return newBorn;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
+    }
+
+    @Override
+    public void setEaten() {
+        isAlive = false;
+        islandMap.getArea(currentCoords).removeEntity(this);
+        Thread.currentThread().interrupt();
     }
 
     public void move() {
@@ -73,23 +104,34 @@ public abstract class Animal implements Entity, Runnable {
     }
 
     private void eat(Entity entity) {
-        Area area = islandMap.getArea(currentCoords);
-        if (entity instanceof Animal animal) {
-            animal.setDead();
+        satiety += entity.getNutritionValue();
+        entity.setEaten();
+    }
+
+    public void reproduce() {
+        reproduced = true;
+        Animal newborn = clone();
+        lifeCreator.animateNewborn(newborn);
+    }
+
+    public boolean tryToReproduce(Entity entity, String name) {
+        if (name.equals(this.getEntityName())) {
+            Animal animal = (Animal) entity;
+            if (!reproduced && !animal.isReproduced()) {
+                animal.setReproduced();
+                return true;
+            }
         }
-        if (entity instanceof Herb herb) {
-            herb.setEaten();
-        }
+        return false;
     }
 
     public boolean exploreArea() {
         Area area = islandMap.getArea(currentCoords);
         for (Entity entity : area.getEntities()) {
-            if (entity.equals(this)) {
-                continue;
-            }
             String name = entity.getEntityName();
-            if (chanceToConsumeMap.containsKey(name)) {
+            if (tryToReproduce(entity, name)) {
+                reproduce();
+            } else if (chanceToConsumeMap.containsKey(name)) {
                 int chance = chanceToConsumeMap.get(name);
                 if (RandomizerUtil.rollChanceToConsume(chance)) {
                     eat(entity);
@@ -109,10 +151,8 @@ public abstract class Animal implements Entity, Runnable {
         this.chanceToConsumeMap.putAll(map);
     }
 
-    private void setDead() {
-        isAlive = false;
-        islandMap.getArea(currentCoords).removeEntity(this);
-        Thread.currentThread().interrupt();
+    public void setReproduced(boolean reproduced) {
+        this.reproduced = reproduced;
     }
 
     public void setIcon(String icon) {
@@ -125,5 +165,37 @@ public abstract class Animal implements Entity, Runnable {
 
     public void setMaxSpeed(int maxSpeed) {
         this.maxSpeed = maxSpeed;
+    }
+
+    public void setMaxSatiety(int maxSatiety) {
+        this.maxSatiety = maxSatiety;
+    }
+
+    public boolean isReproduced() {
+        return reproduced;
+    }
+
+    public void setReproduced() {
+        this.reproduced = true;
+    }
+
+    public int getSatiety() {
+        return satiety;
+    }
+
+    public void setSatiety(int satiety) {
+        this.satiety = satiety;
+    }
+
+    public int getMaxSatiety() {
+        return maxSatiety;
+    }
+
+    public void setNutritionValue(int nutritionValue) {
+        this.nutritionValue = nutritionValue;
+    }
+
+    public void setLifeCreator(LifeCreator lifeCreator) {
+        this.lifeCreator = lifeCreator;
     }
 }
