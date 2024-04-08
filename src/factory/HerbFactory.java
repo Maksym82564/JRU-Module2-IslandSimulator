@@ -4,12 +4,16 @@ import models.herb.Herb;
 import models.map.Coordinates;
 import models.map.IslandMap;
 import randomizer.RandomizerUtil;
+import java.util.HashSet;
+import java.util.Set;
 
 public class HerbFactory {
-    public static void createHerbs(int herbAmount, IslandMap islandMap) {
+    public static Set<Herb> createHerbs(int herbAmount, IslandMap islandMap) {
+        Set<Herb> herbSet = new HashSet<>();
         for (int i = 0; i < herbAmount; i++) {
             Coordinates randomCoords = RandomizerUtil.rollRandomCoords(islandMap);
-            new Herb(randomCoords, islandMap);
+            herbSet.add(new Herb(randomCoords, islandMap));
         }
+        return herbSet;
     }
 }
