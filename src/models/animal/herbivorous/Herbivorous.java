@@ -17,6 +17,7 @@ public abstract class Herbivorous extends Animal {
 
     @Override
     public void run() {
+        countReproductionCycles();
         if (!exploreArea())
         {
             move();
