@@ -10,8 +10,11 @@ import randomizer.RandomizerUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 public abstract class Animal implements Entity, Cloneable {
+    private static final int CYCLES_BEFORE_NEW_REPRODUCTION = 3;
     private LifeCreator lifeCreator;
     private volatile boolean isAlive;
     private final Map<String, Integer> chanceToConsumeMap = new HashMap<>();
@@ -21,6 +24,7 @@ public abstract class Animal implements Entity, Cloneable {
     private String animalName;
     private String icon;
     private volatile boolean reproduced;
+    private int cyclesAfterReproductionCounter;
     private int maxSatiety;
     private int satiety;
     private int nutritionValue;
@@ -33,6 +37,7 @@ public abstract class Animal implements Entity, Cloneable {
     }
 
     private void beBorn() {
+        cyclesAfterReproductionCounter = 0;
         reproduced = true;
         isAlive = true;
         satiety = 0;
@@ -106,6 +111,15 @@ public abstract class Animal implements Entity, Cloneable {
     private void eat(Entity entity) {
         satiety += entity.getNutritionValue();
         entity.setEaten();
+    }
+
+    public void countReproductionCycles() {
+        if (reproduced && cyclesAfterReproductionCounter == CYCLES_BEFORE_NEW_REPRODUCTION) {
+            cyclesAfterReproductionCounter = 0;
+            reproduced = false;
+        } else {
+            cyclesAfterReproductionCounter++;
+        }
     }
 
     public void reproduce(Animal otherAnimal) {
@@ -195,5 +209,13 @@ public abstract class Animal implements Entity, Cloneable {
 
     public void setLifeCreator(LifeCreator lifeCreator) {
         this.lifeCreator = lifeCreator;
+    }
+
+    public int getCyclesAfterReproductionCounter() {
+        return cyclesAfterReproductionCounter;
+    }
+
+    public void setCyclesAfterReproductionCounter(int cyclesNum) {
+        this.cyclesAfterReproductionCounter = cyclesNum;
     }
 }
