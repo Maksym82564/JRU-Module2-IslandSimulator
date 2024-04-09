@@ -9,8 +9,8 @@ import models.map.IslandMap;
 public class Statistic implements Runnable {
     private final IslandMap islandMap;
     private final Wildlife wildlife;
-    private int herbivorsNum;
-    private int deadHerbivorsNum;
+    private int herbivorousNum;
+    private int deadHerbivorousNum;
     private int predatorNum;
     private int deadPredatorNum;
     private int herbNum;
@@ -22,18 +22,18 @@ public class Statistic implements Runnable {
     }
 
     public void getStats() {
-        herbivorsNum = 0;
+        herbivorousNum = 0;
         predatorNum = 0;
         herbNum = 0;
-        deadHerbivorsNum = 0;
+        deadHerbivorousNum = 0;
         deadPredatorNum = 0;
         deadHerbs = 0;
         for (Entity newbornEntity : wildlife.getLifeCreator().getNewbornEntities()) {
             if (newbornEntity instanceof Herbivorous herbivorous) {
                 if (herbivorous.isAlive()) {
-                    herbivorsNum++;
+                    herbivorousNum++;
                 } else {
-                    deadHerbivorsNum++;
+                    deadHerbivorousNum++;
                 }
             } else if (newbornEntity instanceof Predator predator) {
                 if (predator.isAlive()) {
@@ -54,7 +54,7 @@ public class Statistic implements Runnable {
     public void displayStats() {
         getStats();
         System.out.println();
-        System.out.println("Alive Herbivorous = " + herbivorsNum + "\t\tDead Herbivorous = " + deadHerbivorsNum);
+        System.out.println("Alive Herbivorous = " + herbivorousNum + "\t\tDead Herbivorous = " + deadHerbivorousNum);
         System.out.println("Alive Predator = " + predatorNum + "\t\t\tDead Predator = " + deadPredatorNum);
         System.out.println("Alive Herbs = " + herbNum + "\t\t\tDead Herbs = " + deadHerbs);
         System.out.println();
