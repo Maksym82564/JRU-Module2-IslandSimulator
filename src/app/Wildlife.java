@@ -16,8 +16,8 @@ public class Wildlife {
     private final LifeCreator lifeCreator;
     private final IslandMap islandMap;
 
-    public Wildlife(LifeCreator lifeCreator, IslandMap islandMap) {
-        this.lifeCreator = lifeCreator;
+    public Wildlife(IslandMap islandMap) {
+        this.lifeCreator = new LifeCreator();
         this.islandMap = islandMap;
     }
 
