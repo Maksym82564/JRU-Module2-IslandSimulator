@@ -7,7 +7,7 @@ import models.animal.herbivorous.Sheep;
 public enum HerbivorousEnum implements AnimalEnum {
     SHEEP(Sheep.class);
 
-    private Class<? extends Animal> animalClass;
+    private final Class<? extends Animal> animalClass;
 
     HerbivorousEnum(Class<? extends Animal> animalClass) {
         this.animalClass = animalClass;
