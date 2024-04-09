@@ -108,33 +108,31 @@ public abstract class Animal implements Entity, Cloneable {
         entity.setEaten();
     }
 
-    public void reproduce() {
+    public void reproduce(Animal otherAnimal) {
         reproduced = true;
+        otherAnimal.setReproduced();
         Animal newborn = clone();
         lifeCreator.animateNewborn(newborn);
     }
 
-    public boolean tryToReproduce(Entity entity, String name) {
-        if (name.equals(this.getEntityName())) {
-            Animal animal = (Animal) entity;
-            if (!reproduced && !animal.isReproduced()) {
-                animal.setReproduced();
-                return true;
-            }
+    public boolean tryToReproduce(Entity otherEntity, String otherEntityName) {
+        if (otherEntityName.equals(this.getEntityName())) {
+            Animal animal = (Animal) otherEntity;
+            return !reproduced && !animal.isReproduced();
         }
         return false;
     }
 
     public boolean exploreArea() {
         Area area = islandMap.getArea(currentCoords);
-        for (Entity entity : area.getEntities()) {
-            String name = entity.getEntityName();
-            if (tryToReproduce(entity, name)) {
-                reproduce();
-            } else if (chanceToConsumeMap.containsKey(name)) {
-                int chance = chanceToConsumeMap.get(name);
+        for (Entity otherEntity : area.getEntities()) {
+            String otherEntityName = otherEntity.getEntityName();
+            if (tryToReproduce(otherEntity, otherEntityName)) {
+                reproduce((Animal) otherEntity);
+            } else if (chanceToConsumeMap.containsKey(otherEntityName)) {
+                int chance = chanceToConsumeMap.get(otherEntityName);
                 if (RandomizerUtil.rollChanceToConsume(chance)) {
-                    eat(entity);
+                    eat(otherEntity);
                     return true;
                 }
             }
