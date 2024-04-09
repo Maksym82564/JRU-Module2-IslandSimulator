@@ -4,8 +4,10 @@ import interfaces.Entity;
 import models.map.Coordinates;
 import models.map.IslandMap;
 
-public class Herb implements Entity, Runnable {
+public class Herb implements Entity {
     private static final String ICON = "\uD83C\uDF3F";
+    private static final int NUTRITION_VALUE = 1;
+    private static final int TIME_BEFORE_REGROWTH = 1;
     private static final String NAME = "herb";
     private final Coordinates coords;
     private final IslandMap islandMap;
@@ -21,7 +23,7 @@ public class Herb implements Entity, Runnable {
     @Override
     public void run() {
         if (isEaten) {
-            if (++timeSinceHerbEaten == 4) {
+            if (++timeSinceHerbEaten == TIME_BEFORE_REGROWTH) {
                 grow();
                 timeSinceHerbEaten = 0;
             }
@@ -43,13 +45,23 @@ public class Herb implements Entity, Runnable {
         return ICON;
     }
 
+    @Override
     public void setEaten() {
         isEaten = true;
         islandMap.getArea(coords).removeEntity(this);
     }
 
+    @Override
+    public int getNutritionValue() {
+        return NUTRITION_VALUE;
+    }
+
     public Coordinates getCoords() {
         return coords;
+    }
+
+    public boolean isEaten() {
+        return isEaten;
     }
 
     public IslandMap getIslandMap() {
