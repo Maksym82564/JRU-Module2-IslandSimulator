@@ -34,7 +34,8 @@ public class Wildlife {
 
     public void createWildlife(int herbAmount, int predatorAmount, int herbivorousAmount) {
         Set<Entity> entities = createEntities(herbAmount, predatorAmount, herbivorousAmount);
-        lifeCreator.animateNewborn(entities);
+        lifeCreator.animateNewborns(entities);
+        lifeCreator.getReproductionHandlerStarted();
     }
 
     public LifeCreator getLifeCreator() {
