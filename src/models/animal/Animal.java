@@ -1,6 +1,5 @@
 package models.animal;
 
-import app.LifeCreator;
 import enums.Direction;
 import interfaces.Entity;
 import models.map.Coordinates;
@@ -14,8 +13,8 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 public abstract class Animal implements Entity, Cloneable {
+    private static final Set<Animal> reproducedAnimals = new CopyOnWriteArraySet<>();
     private static final int CYCLES_BEFORE_NEW_REPRODUCTION = 3;
-    private LifeCreator lifeCreator;
     private volatile boolean isAlive;
     private final Map<String, Integer> chanceToConsumeMap = new HashMap<>();
     private final IslandMap islandMap;
@@ -126,7 +125,7 @@ public abstract class Animal implements Entity, Cloneable {
         reproduced = true;
         otherAnimal.setReproduced();
         Animal newborn = clone();
-        lifeCreator.animateNewborn(newborn);
+        reproducedAnimals.add(newborn);
     }
 
     public boolean tryToReproduce(Entity otherEntity, String otherEntityName) {
@@ -207,15 +206,15 @@ public abstract class Animal implements Entity, Cloneable {
         this.nutritionValue = nutritionValue;
     }
 
-    public void setLifeCreator(LifeCreator lifeCreator) {
-        this.lifeCreator = lifeCreator;
-    }
-
     public int getCyclesAfterReproductionCounter() {
         return cyclesAfterReproductionCounter;
     }
 
     public void setCyclesAfterReproductionCounter(int cyclesNum) {
         this.cyclesAfterReproductionCounter = cyclesNum;
+    }
+
+    public static Set<Animal> getReproducedAnimals() {
+        return reproducedAnimals;
     }
 }
