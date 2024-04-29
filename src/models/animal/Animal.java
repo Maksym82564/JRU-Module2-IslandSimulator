@@ -109,6 +109,9 @@ public abstract class Animal implements Entity, Cloneable {
 
     private void eat(Entity entity) {
         satiety += entity.getNutritionValue();
+        if (satiety > maxSatiety) {
+            satiety = maxSatiety;
+        }
         entity.setEaten();
     }
 
