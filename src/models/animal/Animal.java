@@ -162,10 +162,6 @@ public abstract class Animal implements Entity, Cloneable {
         this.chanceToConsumeMap.putAll(map);
     }
 
-    public void setReproduced(boolean reproduced) {
-        this.reproduced = reproduced;
-    }
-
     public void setIcon(String icon) {
         this.icon = icon;
     }
@@ -204,14 +200,6 @@ public abstract class Animal implements Entity, Cloneable {
 
     public void setNutritionValue(int nutritionValue) {
         this.nutritionValue = nutritionValue;
-    }
-
-    public int getCyclesAfterReproductionCounter() {
-        return cyclesAfterReproductionCounter;
-    }
-
-    public void setCyclesAfterReproductionCounter(int cyclesNum) {
-        this.cyclesAfterReproductionCounter = cyclesNum;
     }
 
     public static Set<Animal> getReproducedAnimals() {
