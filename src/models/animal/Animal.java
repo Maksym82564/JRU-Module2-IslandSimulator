@@ -15,6 +15,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
 public abstract class Animal implements Entity, Cloneable {
     private static final Set<Animal> reproducedAnimals = new CopyOnWriteArraySet<>();
     private static final int CYCLES_BEFORE_NEW_REPRODUCTION = 3;
+    private static final int CYCLES_TO_DIE_OF_STARVATION = 3;
+    private int cyclesWithoutFood;
     private volatile boolean isAlive;
     private final Map<String, Integer> chanceToConsumeMap = new HashMap<>();
     private final IslandMap islandMap;
@@ -36,6 +38,7 @@ public abstract class Animal implements Entity, Cloneable {
     }
 
     private void beBorn() {
+        cyclesWithoutFood = 0;
         cyclesAfterReproductionCounter = 0;
         reproduced = true;
         isAlive = true;
@@ -70,7 +73,7 @@ public abstract class Animal implements Entity, Cloneable {
     }
 
     @Override
-    public void setEaten() {
+    public void setDead() {
         isAlive = false;
         islandMap.getArea(currentCoords).removeEntity(this);
         Thread.currentThread().interrupt();
@@ -108,15 +111,12 @@ public abstract class Animal implements Entity, Cloneable {
     }
 
     private void eat(Entity entity) {
-        satiety += entity.getNutritionValue();
-        if (satiety > maxSatiety) {
-            satiety = maxSatiety;
-        }
-        entity.setEaten();
+        increaseSatiety(entity.getNutritionValue());
+        entity.setDead();
     }
 
     public void countReproductionCycles() {
-        if (reproduced && cyclesAfterReproductionCounter == CYCLES_BEFORE_NEW_REPRODUCTION) {
+        if (reproduced && cyclesAfterReproductionCounter >= CYCLES_BEFORE_NEW_REPRODUCTION) {
             cyclesAfterReproductionCounter = 0;
             reproduced = false;
         } else {
@@ -154,6 +154,40 @@ public abstract class Animal implements Entity, Cloneable {
             }
         }
         return false;
+    }
+
+    public void handleStatuses() {
+        decreaseSatiety();
+        if (!starvationCheck()) {
+            setDead();
+        }
+        countReproductionCycles();
+    }
+
+    private boolean starvationCheck() {
+        satietyCheck();
+        return cyclesWithoutFood < CYCLES_TO_DIE_OF_STARVATION;
+    }
+
+    private void satietyCheck() {
+        if (satiety == 0) {
+            cyclesWithoutFood++;
+        }
+        else {
+            cyclesWithoutFood = 0;
+        }
+    }
+
+    private void increaseSatiety(int value) {
+        satiety += value;
+        if (satiety > maxSatiety) {
+            satiety = maxSatiety;
+        }
+    }
+
+    private void decreaseSatiety() {
+        satiety -= maxSatiety / 4;
+        if (satiety < 0) satiety = 0;
     }
 
     public boolean isAlive() {

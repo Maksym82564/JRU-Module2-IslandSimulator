@@ -11,10 +11,10 @@ public abstract class Predator extends Animal {
 
     @Override
     public void run() {
-        countReproductionCycles();
         if (!exploreArea())
         {
             move();
         }
+        handleStatuses();
     }
 }
