@@ -46,7 +46,7 @@ public class Herb implements Entity {
     }
 
     @Override
-    public void setEaten() {
+    public void setDead() {
         isEaten = true;
         islandMap.getArea(coords).removeEntity(this);
     }
